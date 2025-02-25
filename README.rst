@@ -28,6 +28,24 @@ Currently, the only way to install EFC is from source, using its GitHub reposito
     pip install .
 
 
+depois disso aqui eu ainda tive que rodar um
+
+    cythonize -i _base_fast.pyx
+
+pra compilar um .pyx pra .c e rodar um exemplo
+
+ate agora nao achei o lugar certo de colocar 
+
+    import sys
+    import os
+    sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+
+antes de
+
+    from efc import EnergyBasedFlowClassifier
+
+pra sanar o erro de `ModuleNotFoundError: No module named 'efc'`
+
 Usage
 -----
 Use EFC like a scikit-learn estimator::
