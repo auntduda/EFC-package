@@ -33,7 +33,7 @@ Currently, the only way to install EFC is from source, using its GitHub reposito
 
     cythonize -i _base_fast.pyx
 
-pra compilar um .pyx pra .c e rodar um exemplo
+pra compilar um ``.pyx`` pra ``.c`` e rodar um exemplo
 
 * ate agora nao achei o lugar certo de colocar ::
 
@@ -45,7 +45,7 @@ antes de ::
 
     from efc import EnergyBasedFlowClassifier
 
-pra sanar o erro de ``ModuleNotFoundError: No module named 'efc'``
+pra sanar o erro de ``ModuleNotFoundError: No module named 'efc'`` quando rodando um exemplo
 
 Usage
 -----

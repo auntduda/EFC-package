@@ -1,52 +1,54 @@
-"""
-================================================================
-Energy-based Flow Classifier for anomaly detection
-================================================================
-
-An example plot of the energies calculated by the :class:`EnergyBasedFlowClassfifier` for benign and malicious samples of cancer patients.
-
-In this example the EFC is trained only with the bening class, making it an anomaly detector
-
-"""
-
 import numpy as np
 from matplotlib import pyplot as plt
+import pandas as pd
 from sklearn.datasets import load_breast_cancer
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import f1_score
 
 import sys
 import os
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+
+sys.path.append('/home/master/Área de Trabalho/energyfc/EFC-package')
 
 from efc import EnergyBasedFlowClassifier
 
-# data = load_breast_cancer()
+import random
+
+data1 = pd.read_csv('/home/master/Área de Trabalho/dataset/dnstun_mendeley/training.csv', names=['ans', 'url'], header=None)
+
+data2 = pd.read_csv('/home/master/Área de Trabalho/dataset/dnstun_mendeley/validating.csv', names=['ans', 'url'], header=None)
+
+# print(data1)
+# print(data2)
+
+data = pd.concat([data1, data2])
+
 # print(data)
 
-# loading the toy dataset from scikit-learn
-X, y = load_breast_cancer(return_X_y=True) 
+X, y = np.array(data[1:7000]['url']), data[1:7000]['ans']
 
-# spliting train and test sets
+print(f"array X: {X}")
+print(f"lista y: {y}")
+
 X_train, X_test, y_train, y_test = train_test_split(
     X, y, random_state=42, stratify=y, shuffle=True, test_size=0.3
+    # data, random_state=42, shuffle=True, test_size=0.3
 )
 
-# print(type(X_train))
-# print(X_test)
-# print(type(y_train))
-# print(y_test)
+# X_train = np.array([[random.randint(0,1e9) for i in range(10)] for j in range(10)]).reshape(-1,1)
+# y_train = np.array([random.randint(0,1) for i in range(100)])
+# X_test = np.array([[random.randint(0,1e9) for i in range(10)] for j in range(10)]).reshape(-1,1)
+# y_test = np.array([random.randint(0,1) for i in range(10)])
 
-# train and test EFC
+print(X_train)
+print(X_test)
+print(y_train)
+print(y_test)
+
 clf = EnergyBasedFlowClassifier(n_bins=10, cutoff_quantile=0.99)
 
-# Since the target for this dataset is binary, 
-# EFC will be used in its single-class version.
-# Therefore, we need to define which class will
-# be used for training with the parameter base_class=0
 clf.fit(X_train, y_train, base_class=0)
 y_pred, y_energies = clf.predict(X_test, return_energies=True)
-
 
 # ploting energies
 benign = np.where(y_test == 0)[0]
@@ -83,7 +85,3 @@ plt.xlabel("Energy", fontsize=12)
 plt.ylabel("Density", fontsize=12)
 
 plt.show()
-
-
-
-
