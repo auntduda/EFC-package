@@ -3,3 +3,4 @@ cython==3.0.11
 scikit-learn
 matplotlib
 pandas
+nltk==3.9.1

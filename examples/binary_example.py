@@ -32,11 +32,6 @@ X_train, X_test, y_train, y_test = train_test_split(
     X, y, random_state=42, stratify=y, shuffle=True, test_size=0.3
 )
 
-# print(type(X_train))
-# print(X_test)
-# print(type(y_train))
-# print(y_test)
-
 # train and test EFC
 clf = EnergyBasedFlowClassifier(n_bins=10, cutoff_quantile=0.99)
 
