@@ -21,16 +21,24 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 from efc import EnergyBasedFlowClassifier
 
-# data = load_breast_cancer()
-# print(data)
+data = load_breast_cancer()
+print(data)
 
 # loading the toy dataset from scikit-learn
-X, y = load_breast_cancer(return_X_y=True) 
+X, y = load_breast_cancer(return_X_y=True)
 
 # spliting train and test sets
 X_train, X_test, y_train, y_test = train_test_split(
     X, y, random_state=42, stratify=y, shuffle=True, test_size=0.3
 )
+
+# print(X_train)
+# print("\n\n\n")
+# print(y_train)
+
+print(X_test)
+print("\n\n\n")
+print(y_test)
 
 # train and test EFC
 clf = EnergyBasedFlowClassifier(n_bins=10, cutoff_quantile=0.99)
@@ -41,7 +49,6 @@ clf = EnergyBasedFlowClassifier(n_bins=10, cutoff_quantile=0.99)
 # be used for training with the parameter base_class=0
 clf.fit(X_train, y_train, base_class=0)
 y_pred, y_energies = clf.predict(X_test, return_energies=True)
-
 
 # ploting energies
 benign = np.where(y_test == 0)[0]
@@ -77,7 +84,7 @@ plt.legend()
 plt.xlabel("Energy", fontsize=12)
 plt.ylabel("Density", fontsize=12)
 
-plt.show()
+# plt.show()
 
 
 

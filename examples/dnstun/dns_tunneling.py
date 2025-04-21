@@ -21,15 +21,14 @@ raw_training = pd.read_csv('/home/master/Área de Trabalho/dataset/dnstun_mendel
 raw_validating = pd.read_csv('/home/master/Área de Trabalho/dataset/dnstun_mendeley/validating.csv', names=['ans', 'url'], header=None)
 majestic_million = pd.read_csv('/home/master/Área de Trabalho/dataset/majestic_million.csv', header=0)
 
-# features do dataset
-training = extract_ngram_features(extract_partial_features(raw_training, "url"), "url", majestic_million)
+# features do dataset -- 12mil/15mil em training sao malignas e 4mil/5mil sao malignas em validating
+training = extract_ngram_features(extract_partial_features(raw_training, "url"), "url", majestic_million).query('ans == 1')
 
 validating = extract_ngram_features(extract_partial_features(raw_validating, "url"), "url", majestic_million)
 
-# print(validating.query('ans == 1').shape[0])
 
 """
-ate aqui, temos em 'partial' e 'ngram' um dataframe com as seguintes colunas:
+ate aqui, temos em 'training' e 'validating' um dataframe com as seguintes colunas:
 
 Index(['ans', 'url', 'entropy', 'Nosubd', 'length',
        'length_continuous_integer', 'length_continuous_string',
@@ -40,24 +39,16 @@ Index(['ans', 'url', 'entropy', 'Nosubd', 'length',
        'reputation_value_per_ngram_2'],
       dtype='object')
 
-ans                                             = target (a resposta usada no treinamento)
+alguma outra feature que nao seja ans           = target (a resposta usada no treinamento)
 as features que eu coletei em formato array([]) = data (o dado utilizado como referencia)
-
-como se fosse
-
-X, y = np.array(df['entropy', 'Nosubd', 'length',
-       'length_continuous_integer', 'length_continuous_string',
-       'frequency_of_special_character', 'ratio_of_special_character',
-       'frequency_of_integer_character', 'ratio_of_integer_character',
-       'frequency_of_vowel_character', 'ratio_of_vowel_character',
-       'maximum_label_length', 'reputation_value_2',
-       'reputation_value_per_ngram_2']), df['ans']
 
 """
 
 # print(training)
 # print("\n\n\n")
 # print(validating)
+
+# training.to_csv("output.csv")
 
 X_train, y_train = np.array(training.iloc[:, 2:16]), training['ans']
 
@@ -70,32 +61,7 @@ X_test, y_test = np.array(validating.iloc[:, 2:16]), validating['ans']
 
 clf = EnergyBasedFlowClassifier(n_bins=10, cutoff_quantile=0.99)
 
-clf.fit(X_train, y_train, base_class=0)
-
-""""
-estou tendo um erro de:
-
-Traceback (most recent call last):
-  File "/home/master/Área de Trabalho/energyfc/EFC-package/examples/dnstun/dns_tunneling.py", line 84, in <module>
-    clf.fit(X_train, y_train, base_class=0)
-  File "/home/master/Área de Trabalho/energyfc/EFC-package/efc/_energyclassifier.py", line 121, in fit
-    X, y = check_X_y(X, y)
-           ^^^^^^^^^^^^^^^
-  File "/home/master/Área de Trabalho/energyfc/lib/python3.11/site-packages/sklearn/utils/validation.py", line 1370, in check_X_y
-    X = check_array(
-        ^^^^^^^^^^^^
-  File "/home/master/Área de Trabalho/energyfc/lib/python3.11/site-packages/sklearn/utils/validation.py", line 1055, in check_array
-    array = _asarray_with_order(array, order=order, dtype=dtype, xp=xp)
-            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/master/Área de Trabalho/energyfc/lib/python3.11/site-packages/sklearn/utils/_array_api.py", line 839, in _asarray_with_order
-    array = numpy.asarray(array, order=order, dtype=dtype)
-            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-ValueError: could not convert string to float: 'q+z8a3wbba.hidemyself.org.'
-
-acho que o EFC ta tentando discretizar tudo do dataframe, mas quando tenta discretizar a url, ele nao consegue por ser uma string
-
-posso so tirar a url do dataframe? desse modo, nao perderei minha chave de identificacao do dataframe? ou o index ja sera o suficiente?
-"""
+clf.fit(X_train, y_train, base_class=1)
 
 y_pred, y_energies = clf.predict(X_test, return_energies=True)
 
