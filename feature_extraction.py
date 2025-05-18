@@ -159,6 +159,8 @@ def reputation_value(domain, dict_ngram_frequencies, weight_ngram_func):
 
     if domain == '':
         return None
+    elif domain == None:
+        return -1
 
     reputation_value = 0
     n_list = [int(st[0]) for st in dict_ngram_frequencies.keys()]
@@ -176,6 +178,9 @@ def reputation_value(domain, dict_ngram_frequencies, weight_ngram_func):
 
 def reputation_value_per_ngram(domain, dict_ngram_frequencies, weight_ngram_func):
     domain = remove_unknow_tld(domain)
+
+    if domain == None:
+        return -2
 
     reputation_value = 0
     ngram_count = 0
